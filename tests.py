@@ -7,6 +7,10 @@ from util import preprocess_ncc, compute_ncc, project, unproject_corners, \
     pyrdown, pyrup, compute_photometric_stereo
 
 
+def assertNear(actual, expected, threshold):
+    assert (np.abs(expected - actual) < threshold).all()
+
+
 def skip_not_implemented(func):
     from nose.plugins.skip import SkipTest
 
@@ -29,7 +33,7 @@ def preprocess_ncc_zeros_test():
 
     assert n.shape == (2 * ncc_size - 1, 2 * ncc_size -
                        1, 3 * ncc_size * ncc_size)
-    assert (np.abs(n) < 1e-6).all()
+    assertNear(n, 0, 1e-6)
 
 
 @skip_not_implemented
@@ -57,7 +61,7 @@ def preprocess_ncc_delta_test():
 
     assert n.shape == (2 * ncc_size - 1, 2 * ncc_size -
                        1, 3 * ncc_size * ncc_size)
-    assert (np.abs(n - correct) < 1e-6).all()
+    assertNear(n, correct, 1e-6)
 
 
 @skip_not_implemented
@@ -69,7 +73,7 @@ def preprocess_ncc_uniform_test():
 
     assert n.shape == (2 * ncc_size - 1, 2 * ncc_size -
                        1, 3 * ncc_size * ncc_size)
-    assert (np.abs(n[ncc_size - 1, ncc_size - 1, :]) < 1e-6).all()
+    assertNear(n[ncc_size - 1, ncc_size - 1, :], 0, 1e-6)
 
 
 @skip_not_implemented
@@ -85,12 +89,11 @@ def correlated_ncc_test():
 
     ncc = compute_ncc(n1, n2)
 
-    assert (np.abs(ncc[:ncc_half, :]) < 1e-5).all()
-    assert (np.abs(ncc[-ncc_half:, :]) < 1e-5).all()
-    assert (np.abs(ncc[:, :ncc_half]) < 1e-5).all()
-    assert (np.abs(ncc[:, -ncc_half:]) < 1e-5).all()
-    assert (
-        np.abs(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half] - 1) < 1e-5).all()
+    assertNear(ncc[:ncc_half, :], 0, 1e-5)
+    assertNear(ncc[-ncc_half:, :], 0, 1e-5)
+    assertNear(ncc[:, :ncc_half], 0, 1e-5)
+    assertNear(ncc[:, -ncc_half:], 0, 1e-5)
+    assertNear(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half], 1, 1e-5)
 
 
 @skip_not_implemented
@@ -106,12 +109,11 @@ def anticorrelated_ncc_test():
 
     ncc = compute_ncc(n1, n2)
 
-    assert (np.abs(ncc[:ncc_half, :]) < 1e-5).all()
-    assert (np.abs(ncc[-ncc_half:, :]) < 1e-5).all()
-    assert (np.abs(ncc[:, :ncc_half]) < 1e-5).all()
-    assert (np.abs(ncc[:, -ncc_half:]) < 1e-5).all()
-    assert (
-        np.abs(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half] - -1) < 1e-5).all()
+    assertNear(ncc[:ncc_half, :], 0, 1e-5)
+    assertNear(ncc[-ncc_half:, :], 0, 1e-5)
+    assertNear(ncc[:, :ncc_half], 0, 1e-5)
+    assertNear(ncc[:, -ncc_half:], 0, 1e-5)
+    assertNear(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half], -1, 1e-5)
 
 
 @skip_not_implemented
@@ -127,7 +129,7 @@ def zero_ncc_test():
 
     ncc = compute_ncc(n1, n2)
 
-    assert (np.abs(ncc) < 1e-6).all()
+    assertNear(ncc, 0, 1e-6)
 
 
 @skip_not_implemented
@@ -143,7 +145,7 @@ def offset_ncc_test():
     ncc = compute_ncc(n1, n2)
 
     assert ncc.shape == (2 * ncc_size - 1, 2 * ncc_size - 1)
-    assert (np.abs(ncc[ncc_size, ncc_size] - 1) < 1e-6).all()
+    assertNear(ncc[ncc_size, ncc_size], 1, 1e-6)
 
 
 @skip_not_implemented
@@ -160,12 +162,11 @@ def scale_ncc_test():
     ncc = compute_ncc(n1, n2)
 
     assert ncc.shape == (2 * ncc_size - 1, 2 * ncc_size - 1)
-    assert (np.abs(ncc[:ncc_half, :]) < 1e-5).all()
-    assert (np.abs(ncc[-ncc_half:, :]) < 1e-5).all()
-    assert (np.abs(ncc[:, :ncc_half]) < 1e-5).all()
-    assert (np.abs(ncc[:, -ncc_half:]) < 1e-5).all()
-    assert (
-        np.abs(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half] - 1) < 1e-5).all()
+    assertNear(ncc[:ncc_half, :], 0, 1e-5)
+    assertNear(ncc[-ncc_half:, :], 0, 1e-5)
+    assertNear(ncc[:, :ncc_half], 0, 1e-5)
+    assertNear(ncc[:, -ncc_half:], 0, 1e-5)
+    assertNear(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half], 1, 1e-5)
 
 
 @skip_not_implemented
@@ -182,12 +183,11 @@ def offset_and_scale_ncc_test():
     ncc = compute_ncc(n1, n2)
 
     assert ncc.shape == (2 * ncc_size - 1, 2 * ncc_size - 1)
-    assert (np.abs(ncc[:ncc_half, :]) < 1e-6).all()
-    assert (np.abs(ncc[-ncc_half:, :]) < 1e-6).all()
-    assert (np.abs(ncc[:, :ncc_half]) < 1e-6).all()
-    assert (np.abs(ncc[:, -ncc_half:]) < 1e-6).all()
-    assert (
-        np.abs(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half] - 1) < 1e-6).all()
+    assertNear(ncc[:ncc_half, :], 0, 1e-6)
+    assertNear(ncc[-ncc_half:, :], 0, 1e-6)
+    assertNear(ncc[:, :ncc_half], 0, 1e-6)
+    assertNear(ncc[:, -ncc_half:], 0, 1e-6)
+    assertNear(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half], 1, 1e-6)
 
 
 @skip_not_implemented
@@ -210,8 +210,8 @@ def project_Rt_identity_centered_test():
     projection = project(K, Rt, point)
 
     assert projection.shape == (1, 1, 2)
-    assert projection[0][0][0] == width / 2.0
-    assert projection[0][0][1] == height / 2.0
+    assertNear(projection[0][0][0], width / 2.0, 1e-5)
+    assertNear(projection[0][0][1], height / 2.0, 1e-5)
 
 
 @skip_not_implemented
@@ -235,8 +235,8 @@ def project_Rt_identity_20x10_test():
     projection = project(K, Rt, point)
 
     assert projection.shape == (height, width, 2)
-    assert (projection[:, :, 0] == width / 2.0).all()
-    assert (projection[:, :, 1] == height / 2.0).all()
+    assertNear(projection[:, :, 0], width / 2.0, 1e-6)
+    assertNear(projection[:, :, 1], height / 2.0, 1e-6)
 
 
 @skip_not_implemented
@@ -259,8 +259,8 @@ def project_Rt_identity_xoff_test():
     projection = project(K, Rt, point)
 
     assert projection.shape == (1, 1, 2)
-    assert projection[0][0][0] == width
-    assert projection[0][0][1] == height / 2.0
+    assertNear(projection[0][0][0], width, 1e-5)
+    assertNear(projection[0][0][1], height / 2.0, 1e-5)
 
 
 @skip_not_implemented
@@ -283,8 +283,8 @@ def project_Rt_identity_yoff_test():
     projection = project(K, Rt, point)
 
     assert projection.shape == (1, 1, 2)
-    assert projection[0][0][0] == width / 2.0
-    assert projection[0][0][1] == height
+    assertNear(projection[0][0][0], width / 2.0, 1e-5)
+    assertNear(projection[0][0][1], height, 1e-5)
 
 
 @skip_not_implemented
@@ -307,8 +307,8 @@ def project_Rt_identity_upperleft_test():
     projection = project(K, Rt, point)
 
     assert projection.shape == (1, 1, 2)
-    assert projection[0][0][0] == 0
-    assert projection[0][0][1] == 0
+    assertNear(projection[0][0][0], 0, 1e-5)
+    assertNear(projection[0][0][1], 0, 1e-5)
 
 
 @skip_not_implemented
@@ -332,8 +332,8 @@ def project_Rt_rot90_upperleft_test():
 
     projection = project(K, Rt, point)
     assert projection.shape == (1, 1, 2)
-    assert projection[0][0][0] == 0
-    assert projection[0][0][1] == height
+    assertNear(projection[0][0][0], 0, 1e-5)
+    assertNear(projection[0][0][1], height, 1e-5)
 
 
 @skip_not_implemented
@@ -358,8 +358,8 @@ def project_Rt_rot180_upperleft_test():
     projection = project(K, Rt, point)
 
     assert projection.shape == (1, 1, 2)
-    assert projection[0][0][0] == width
-    assert projection[0][0][1] == height
+    assertNear(projection[0][0][0], width, 1e-5)
+    assertNear(projection[0][0][1], height, 1e-5)
 
 
 @skip_not_implemented
@@ -382,19 +382,19 @@ def unproject_Rt_identity_1x1_test():
 
     assert point.shape == (2, 2, 3)
 
-    assert (point[0, 0, 0] == -0.5).all()
-    assert (point[0, 0, 1] == -0.5).all()
+    assertNear(point[0, 0, 0], -0.5, 1e-5)
+    assertNear(point[0, 0, 1], -0.5, 1e-5)
 
-    assert (point[0, 1, 0] == 0.5).all()
-    assert (point[0, 1, 1] == -0.5).all()
+    assertNear(point[0, 1, 0], 0.5, 1e-5)
+    assertNear(point[0, 1, 1], -0.5, 1e-5)
 
-    assert (point[1, 0, 0] == -0.5).all()
-    assert (point[1, 0, 1] == 0.5).all()
+    assertNear(point[1, 0, 0], -0.5, 1e-5)
+    assertNear(point[1, 0, 1], 0.5, 1e-5)
 
-    assert (point[1, 1, 0] == 0.5).all()
-    assert (point[1, 1, 1] == 0.5).all()
+    assertNear(point[1, 1, 0], 0.5, 1e-5)
+    assertNear(point[1, 1, 1], 0.5, 1e-5)
 
-    assert (point[:, :, 2] == 1).all()
+    assertNear(point[:, :, 2], 1, 1e-5)
 
 
 @skip_not_implemented
@@ -417,19 +417,19 @@ def unproject_Rt_identity_2x2_test():
 
     assert point.shape == (2, 2, 3)
 
-    assert point[0, 0, 0] == -1
-    assert point[0, 0, 1] == -1
+    assertNear(point[0, 0, 0], -1, 1e-5)
+    assertNear(point[0, 0, 1], -1, 1e-5)
 
-    assert point[0, 1, 0] == 1
-    assert point[0, 1, 1] == -1
+    assertNear(point[0, 1, 0], 1, 1e-5)
+    assertNear(point[0, 1, 1], -1, 1e-5)
 
-    assert point[1, 0, 0] == -1
-    assert point[1, 0, 1] == 1
+    assertNear(point[1, 0, 0], -1, 1e-5)
+    assertNear(point[1, 0, 1], 1, 1e-5)
 
-    assert point[1, 1, 0] == 1
-    assert point[1, 1, 1] == 1
+    assertNear(point[1, 1, 0], 1, 1e-5)
+    assertNear(point[1, 1, 1], 1, 1e-5)
 
-    assert (point[:, :, 2] == 1).all()
+    assertNear(point[:, :, 2], 1, 1e-5)
 
 
 @skip_not_implemented
@@ -452,19 +452,19 @@ def unproject_Rt_identity_2x2_2xdepth_test():
 
     assert point.shape == (2, 2, 3)
 
-    assert point[0, 0, 0] == -2
-    assert point[0, 0, 1] == -2
+    assertNear(point[0, 0, 0], -2, 1e-6)
+    assertNear(point[0, 0, 1], -2, 1e-6)
 
-    assert point[0, 1, 0] == 2
-    assert point[0, 1, 1] == -2
+    assertNear(point[0, 1, 0], 2, 1e-6)
+    assertNear(point[0, 1, 1], -2, 1e-6)
 
-    assert point[1, 0, 0] == -2
-    assert point[1, 0, 1] == 2
+    assertNear(point[1, 0, 0], -2, 1e-6)
+    assertNear(point[1, 0, 1], 2, 1e-6)
 
-    assert point[1, 1, 0] == 2
-    assert point[1, 1, 1] == 2
+    assertNear(point[1, 1, 0], 2, 1e-6)
+    assertNear(point[1, 1, 1], 2, 1e-6)
 
-    assert (point[:, :, 2] == 2).all()
+    assertNear(point[:, :, 2], 2, 1e-6)
 
 
 @skip_not_implemented
@@ -489,17 +489,17 @@ def project_unproject_Rt_identity_test():
 
     assert projection.shape == (2, 2, 2)
 
-    assert np.abs(projection[0, 0, 0]) < 1e-5
-    assert np.abs(projection[0, 0, 1]) < 1e-5
+    assertNear(projection[0, 0, 0], 0, 1e-5)
+    assertNear(projection[0, 0, 1], 0, 1e-5)
 
-    assert np.abs(projection[0, 1, 0] - width) < 1e-5
-    assert np.abs(projection[0, 1, 1]) < 1e-5
+    assertNear(projection[0, 1, 0], width, 1e-5)
+    assertNear(projection[0, 1, 1], 0, 1e-5)
 
-    assert np.abs(projection[1, 0, 0]) < 1e-5
-    assert np.abs(projection[1, 0, 1] - height) < 1e-5
+    assertNear(projection[1, 0, 0], 0, 1e-5)
+    assertNear(projection[1, 0, 1], height, 1e-5)
 
-    assert np.abs(projection[1, 1, 0] - width) < 1e-5
-    assert np.abs(projection[1, 1, 1] - height) < 1e-5
+    assertNear(projection[1, 1, 0], width, 1e-5)
+    assertNear(projection[1, 1, 1], height, 1e-5)
 
 
 @skip_not_implemented
@@ -524,17 +524,17 @@ def project_unproject_Rt_identity_randdepth_test():
 
     assert projection.shape == (2, 2, 2)
 
-    assert np.abs(projection[0, 0, 0]) < 1e-5
-    assert np.abs(projection[0, 0, 1]) < 1e-5
+    assertNear(projection[0, 0, 0], 0, 1e-5)
+    assertNear(projection[0, 0, 1], 0, 1e-5)
 
-    assert np.abs(projection[0, 1, 0] - width) < 1e-5
-    assert np.abs(projection[0, 1, 1]) < 1e-5
+    assertNear(projection[0, 1, 0], width, 1e-5)
+    assertNear(projection[0, 1, 1], 0, 1e-5)
 
-    assert np.abs(projection[1, 0, 0]) < 1e-5
-    assert np.abs(projection[1, 0, 1] - height) < 1e-5
+    assertNear(projection[1, 0, 0], 0, 1e-5)
+    assertNear(projection[1, 0, 1], height, 1e-5)
 
-    assert np.abs(projection[1, 1, 0] - width) < 1e-5
-    assert np.abs(projection[1, 1, 1] - height) < 1e-5
+    assertNear(projection[1, 1, 0], width, 1e-5)
+    assertNear(projection[1, 1, 1], height, 1e-5)
 
 
 @skip_not_implemented
@@ -564,17 +564,17 @@ def project_unproject_Rt_random_randdepth_test():
 
     assert projection.shape == (2, 2, 2)
 
-    assert np.abs(projection[0, 0, 0]) < 1e-5
-    assert np.abs(projection[0, 0, 1]) < 1e-5
+    assertNear(projection[0, 0, 0], 0, 1e-5)
+    assertNear(projection[0, 0, 1], 0, 1e-5)
 
-    assert np.abs(projection[0, 1, 0] - width) < 1e-5
-    assert np.abs(projection[0, 1, 1]) < 1e-5
+    assertNear(projection[0, 1, 0], width, 1e-5)
+    assertNear(projection[0, 1, 1], 0, 1e-5)
 
-    assert np.abs(projection[1, 0, 0]) < 1e-5
-    assert np.abs(projection[1, 0, 1] - height) < 1e-5
+    assertNear(projection[1, 0, 0], 0, 1e-5)
+    assertNear(projection[1, 0, 1], height, 1e-5)
 
-    assert np.abs(projection[1, 1, 0] - width) < 1e-5
-    assert np.abs(projection[1, 1, 1] - height) < 1e-5
+    assertNear(projection[1, 1, 0], width, 1e-5)
+    assertNear(projection[1, 1, 1], height, 1e-5)
 
 
 @skip_not_implemented
@@ -587,7 +587,7 @@ def pyrdown_even_test():
     down = pyrdown(image)
 
     assert down.shape == (height / 2, width / 2, 3)
-    assert (down == 1).all()
+    assertNear(down, 1, 1e-6)
 
 
 @skip_not_implemented
@@ -600,7 +600,7 @@ def pyrdown_odd_test():
     down = pyrdown(image)
 
     assert down.shape == ((height + 1) / 2, (width + 1) / 2, 3)
-    assert (down == 1).all()
+    assertNear(down, 1, 1e-6)
 
 
 @skip_not_implemented
@@ -613,7 +613,7 @@ def pyrdown_nonsquare_test():
     down = pyrdown(image)
 
     assert down.shape == ((height + 1) / 2, (width + 1) / 2, 3)
-    assert (down == 1).all()
+    assertNear(down, 1, 1e-6)
 
 
 @skip_not_implemented
@@ -638,7 +638,7 @@ def pyrdown_ones_square_test():
     up = pyrup(image)
 
     assert up.shape == (2 * height, 2 * width, 3)
-    assert (up == 1).all()
+    assertNear(up, 1, 1e-6)
 
 
 @skip_not_implemented
@@ -651,7 +651,7 @@ def pyrdown_ones_nonsquare_test():
     up = pyrup(image)
 
     assert up.shape == (2 * height, 2 * width, 3)
-    assert (up == 1).all()
+    assertNear(up, 1, 1e-5)
 
 
 @skip_not_implemented
@@ -701,8 +701,8 @@ def compute_photometric_stereo_test():
     assert albedo.shape == (1, 1, 1)
     assert normals.shape == (1, 1, 3)
 
-    assert albedo[0, 0, 0] == 1
-    assert (normals[0, 0, :] == (0, 0, 1)).all()
+    assertNear(albedo[0, 0, 0], 1, 1e-6)
+    assertNear(normals[0, 0, :], (0, 0, 1), 1e-6)
 
 
 @skip_not_implemented
@@ -724,8 +724,8 @@ def compute_photometric_stereo_half_albedo_test():
     assert albedo.shape == (1, 1, 1)
     assert normals.shape == (1, 1, 3)
 
-    assert albedo[0, 0, 0] == 0.5
-    assert (normals[0, 0, :] == (0, 0, 1)).all()
+    assertNear(albedo[0, 0, 0], 0.5, 1e-6)
+    assertNear(normals[0, 0, :], (0, 0, 1), 1e-6)
 
 
 @skip_not_implemented
@@ -747,8 +747,8 @@ def compute_photometric_stereo_angle_test():
     assert albedo.shape == (1, 1, 1)
     assert normals.shape == (1, 1, 3)
 
-    assert albedo[0, 0, 0] == 1
-    assert ((normals[0, 0, :] - (0, 0, 1)) < 1e-5).all()
+    assertNear(albedo[0, 0, 0], 1, 1e-5)
+    assertNear(normals[0, 0, :], (0, 0, 1), 1e-5)
 
 
 @skip_not_implemented
@@ -761,7 +761,7 @@ def preprocess_ncc_full_test():
 
     correct = np.load('test_materials/fabrics_normalized.npy')
 
-    assert (np.abs(result - correct) < 1e-5).all()
+    assertNear(result, correct, 1e-5)
 
 
 @skip_not_implemented
@@ -774,12 +774,11 @@ def ncc_full_identity_test():
     ncc = compute_ncc(normalized, normalized)
 
     assert ncc.shape == normalized.shape[:2]
-    assert (np.abs(ncc[:ncc_half, :]) < 1e-5).all()
-    assert (np.abs(ncc[-ncc_half:, :]) < 1e-5).all()
-    assert (np.abs(ncc[:, :ncc_half]) < 1e-5).all()
-    assert (np.abs(ncc[:, -ncc_half:]) < 1e-5).all()
-    assert (
-        np.abs(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half] - 1) < 1e-5).all()
+    assertNear(ncc[:ncc_half, :], 0, 1e-5)
+    assertNear(ncc[-ncc_half:, :], 0, 1e-5)
+    assertNear(ncc[:, :ncc_half], 0, 1e-5)
+    assertNear(ncc[:, -ncc_half:], 0, 1e-5)
+    assertNear(ncc[ncc_half:-ncc_half, ncc_half:-ncc_half], 1, 1e-5)
 
 
 @skip_not_implemented
@@ -801,7 +800,7 @@ def ncc_full_offset_test():
 
     assert result.shape == n1.shape[:2]
     assert result.shape == n2.shape[:2]
-    assert (np.abs(result - correct) < 1e-5).all()
+    assertNear(result, correct, 1e-5)
 
 
 @skip_not_implemented
@@ -820,7 +819,7 @@ def ncc_full_shapes_test():
 
     assert result.shape == n1.shape[:2]
     assert result.shape == n2.shape[:2]
-    assert (np.abs(result - correct) < 1e-5).all()
+    assertNear(result, correct, 1e-5)
 
 
 @skip_not_implemented
@@ -830,11 +829,12 @@ def compute_photometric_stereo_full_test():
 
     albedo, normals = compute_photometric_stereo(lights, images)
 
-    assert (np.abs(albedo[100:-100, 100:-100] / 255.0 - 1) < 1e-1).all()
+    assertNear(albedo[100:-100, 100:-100] / 255.0, 1, 1e-1)
 
     correct_normals = np.load('test_materials/sphere_normals.npy')
 
-    assert (np.abs(normals - correct_normals) < 1e-5)[100:-100, 100:-100].all()
+    assertNear(normals[100:-100, 100:-100],
+               correct_normals[100:-100, 100:-100], 1e-5)
 
 
 @skip_not_implemented
@@ -847,7 +847,7 @@ def pyrdown_hybrid_test():
     image = np.uint8(np.clip(image, 0, 255))
     correct = imread('test_materials/MonroeEnstein_AudeOliva2007_small.png')
 
-    assert (np.abs(image - correct) / 255.0 < 1e-2).all()
+    assertNear(image / 255.0, correct / 255.0, 1e-2)
 
 
 @skip_not_implemented
@@ -861,4 +861,4 @@ def pyrup_hybrid_test():
 
     correct = imread('test_materials/MonroeEnstein_AudeOliva2007_large.png')
 
-    assert (np.abs(image - correct) / 255.0 < 1e-2).all()
+    assertNear(image / 255.0, correct / 255.0, 1e-2)
