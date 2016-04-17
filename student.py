@@ -178,7 +178,7 @@ def preprocess_ncc_impl(image, ncc_size):
 
     Patches are to be flattened into vectors with the default numpy row
     major order.  For example, given the following
-    2 (height) x 2 (width) x 2 (channels) patch, here is how the output
+    2 (channels) x 2 (height) x 2 (width) patch, here is how the output
     vector should be arranged.
 
     channel1         channel2
@@ -189,7 +189,7 @@ def preprocess_ncc_impl(image, ncc_size):
     +------+------+  +------+------+  v
     width ------->
 
-    v = [ x111, x112, x121, x122, x211, x212, x221, x222 ]
+    v = [ x111, x121, x211, x221, x112, x122, x212, x222 ]
 
     Input:
         image -- height x width x channels image of type float32
