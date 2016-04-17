@@ -20,7 +20,8 @@ def compute_photometric_stereo_impl(lights, images):
                   as lighting directions.
         images -- list of N images.  Each image is of the same scene from the
                   same viewpoint, but under the lighting condition specified in
-                  lights.  Images are height x width x channels arrays.
+                  lights.  Images are height x width x channels arrays, all
+                  with identical dimensions.
     Output:
         albedo -- float32 height x width x channels image with dimensions
                   matching the input images.
