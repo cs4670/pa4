@@ -176,10 +176,10 @@ def preprocess_ncc_impl(image, ncc_size):
     Patches that extend past the boundary of the input image at all should be
     considered zero.  Their entire vector should be set to 0.
 
-    Patches are to be flattened into vectors with the default numpy row
-    major order.  For example, given the following
-    2 (channels) x 2 (height) x 2 (width) patch, here is how the output
-    vector should be arranged.
+    Patches of shape channels x height x width (e.g. 3 x ncc_size x ncc_size)
+    are to be flattened into vectors with the default numpy row major order.
+    For example, given the following 2 (channels) x 2 (height) x 2 (width)
+    patch, here is how the output vector should be arranged.
 
     channel1         channel2
     +------+------+  +------+------+ height
