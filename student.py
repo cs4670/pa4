@@ -16,7 +16,7 @@ def compute_photometric_stereo_impl(lights, images):
     Normals should be unit vectors.
 
     Input:
-        lights -- 3 x N array.  Rows are normalized and are to be interpreted
+        lights -- 3 x N array.  Columns are normalized and are to be interpreted
                   as lighting directions.
         images -- list of N images.  Each image is of the same scene from the
                   same viewpoint, but under the lighting condition specified in
