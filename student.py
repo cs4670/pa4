@@ -193,7 +193,8 @@ def preprocess_ncc_impl(image, ncc_size):
 
     Input:
         image -- height x width x channels image of type float32
-        ncc_size -- integer width and height of NCC patch region.
+        ncc_size -- integer width and height of NCC patch region.  ncc_size
+                    will always be odd.
     Output:
         normalized -- heigth x width x (channels * ncc_size**2) array
     """
