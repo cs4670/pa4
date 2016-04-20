@@ -83,8 +83,11 @@ if normals is not None:
 width = min(widths)
 height = min(heights)
 
-assert max(widths) - width <= data.stereo_downscale_factor
-assert max(heights) - height <= data.stereo_downscale_factor
+lost_pixel_bound = 0
+if mode in ('both', 'depth'):
+    lost_pixel_bound = data.stereo_downscale_factor
+assert max(widths) - width <= lost_pixel_bound
+assert max(heights) - height <= lost_pixel_bound
 
 if depth is not None:
     depth = depth[:height, :width]
