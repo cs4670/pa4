@@ -840,6 +840,7 @@ def compute_photometric_stereo_full_test():
 @skip_not_implemented
 def pyrdown_hybrid_test():
     image = imread('test_materials/MonroeEnstein_AudeOliva2007.jpg')
+    image = image.astype(np.float32)
     image = pyrdown(image)
     image = pyrdown(image)
     image = pyrdown(image)
@@ -853,6 +854,7 @@ def pyrdown_hybrid_test():
 @skip_not_implemented
 def pyrup_hybrid_test():
     image = imread('test_materials/MonroeEnstein_AudeOliva2007_small.png')
+    image = image.astype(np.float32)
 
     image = pyrup(image)
     image = pyrup(image)
