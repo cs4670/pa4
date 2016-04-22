@@ -92,6 +92,9 @@ def project_impl(K, Rt, points):
     """
     Project 3D points into a calibrated camera.
 
+    If the point has a depth < 1e-7 from the camera or is located behind the
+    camera, then set the projection to [np.nan, np.nan].
+
     Input:
         K -- camera intrinsics calibration matrix
         Rt -- 3 x 4 camera extrinsics calibration matrix
