@@ -139,7 +139,7 @@ def unproject_corners_impl(K, width, height, depth, Rt):
             | R t |^-1 = | R' -R't |
             | 0 1 |      | 0   1   |
 
-          p = R' * (z * x', z * y', z, 1) - R't
+          p = R' * (z * x', z * y', z) - R't
 
     Input:
         K -- camera intrinsics calibration matrix
