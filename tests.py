@@ -8,7 +8,8 @@ from util import preprocess_ncc, compute_ncc, project, unproject_corners, \
 
 
 def assertNear(actual, expected, threshold):
-    assert (np.abs(expected - actual) < threshold).all()
+    assert (np.abs(expected - actual) <
+            threshold).all(), np.abs(expected - actual).max()
 
 
 def skip_not_implemented(func):
@@ -756,6 +757,7 @@ def preprocess_ncc_full_test():
     ncc_size = 5
 
     image = imread('test_materials/fabrics.png')
+    image = image.astype(np.float32)
 
     result = preprocess_ncc(image, ncc_size)
 
@@ -786,6 +788,7 @@ def ncc_full_offset_test():
     ncc_size = 5
 
     image = imread('test_materials/justinpic_c.png')
+    image = image.astype(np.float32)
 
     split = image.shape[1] / 2
     left = image[:, :split, :]
@@ -809,6 +812,9 @@ def ncc_full_shapes_test():
 
     image1 = imread('test_materials/ncc1.png')
     image2 = imread('test_materials/ncc2.png')
+
+    image1 = image1.astype(np.float32)
+    image2 = image2.astype(np.float32)
 
     n1 = preprocess_ncc(image1, ncc_size)
     n2 = preprocess_ncc(image2, ncc_size)
