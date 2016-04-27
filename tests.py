@@ -830,7 +830,8 @@ def ncc_full_shapes_test():
 
 @skip_not_implemented
 def compute_photometric_stereo_full_test():
-    images = [imread('test_materials/sphere%02d.png' % i) for i in xrange(3)]
+    images = [imread('test_materials/sphere%02d.png' %
+                     i).astype(np.float32) for i in xrange(3)]
     lights = np.load('test_materials/sphere_lights.npy')
 
     albedo, normals = compute_photometric_stereo(lights, images)
